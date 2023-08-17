@@ -227,6 +227,14 @@ void ZEDWrapperNodelet::onInit()
     mConnStatus = sl::ERROR_CODE::CAMERA_NOT_DETECTED;
 
     NODELET_INFO_STREAM(" *** Opening " << sl::toString(mZedUserCamModel) << "...");
+    // 开始打开camera
+    while (mConnStatus != ERROR_CODE::SUCCESS) {
+        NODELET_INFO_STREAM("ZED connection -> " << sl::toString(mConnStatus));
+        mZed.close();
+        std::this_thread::sleep_for(std::chrono::milliseconds(2000));
+        // ros::Duration(2.0).sleep();
+        mConnStatus = mZed.open(mZedParams);
+    }
     while (mConnStatus != sl::ERROR_CODE::SUCCESS) {
         mConnStatus = mZed.open(mZedParams);
         NODELET_INFO_STREAM("ZED connection -> " << sl::toString(mConnStatus));
